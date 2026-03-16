@@ -8,9 +8,9 @@ namespace GalacticCoopShooter.Entities;
 
 public sealed class Player : Entity
 {
-    private const float MoveSpeed = 340f;
-    private const float BaseFireCooldown = 0.32f;
-    private const float RapidFireCooldown = 0.11f;
+    private const float MoveSpeed = 360f;
+    private const float BaseFireCooldown = 0.18f;
+    private const float TripleShotCooldown = 0.14f;
 
     private float _fireCooldownRemaining;
     private float _enginePulse;
@@ -20,13 +20,14 @@ public sealed class Player : Entity
     {
     }
 
-    public int Lives { get; private set; } = 3;
-    public float RapidFireRemaining { get; private set; }
-    public float DoubleShotRemaining { get; private set; }
-    public float InvulnerabilityRemaining { get; private set; }
+    public int Lives { get; private set; } = GameConfig.StartingLives;
+    public float TripleShotRemaining { get; private set; }
+    public float ShieldRemaining { get; private set; }
+    public float DamageRecoveryRemaining { get; private set; }
 
-    public bool IsRapidFireActive => RapidFireRemaining > 0f;
-    public bool IsDoubleShotActive => DoubleShotRemaining > 0f;
+    public bool IsTripleShotActive => TripleShotRemaining > 0f;
+    public bool IsShieldActive => ShieldRemaining > 0f;
+    public Vector2 Center => Position + (Size * 0.5f);
 
     public void Tick(float deltaTime, InputManager input, Rectangle movementBounds, List<Projectile> bullets)
     {
@@ -37,9 +38,9 @@ public sealed class Player : Entity
 
         _enginePulse += deltaTime;
 
-        RapidFireRemaining = MathF.Max(0f, RapidFireRemaining - deltaTime);
-        DoubleShotRemaining = MathF.Max(0f, DoubleShotRemaining - deltaTime);
-        InvulnerabilityRemaining = MathF.Max(0f, InvulnerabilityRemaining - deltaTime);
+        TripleShotRemaining = MathF.Max(0f, TripleShotRemaining - deltaTime);
+        ShieldRemaining = MathF.Max(0f, ShieldRemaining - deltaTime);
+        DamageRecoveryRemaining = MathF.Max(0f, DamageRecoveryRemaining - deltaTime);
         _fireCooldownRemaining = MathF.Max(0f, _fireCooldownRemaining - deltaTime);
 
         var direction = 0f;
@@ -59,22 +60,22 @@ public sealed class Player : Entity
         var clampedX = MathHelper.Clamp(Position.X, movementBounds.Left, movementBounds.Right - Size.X);
         Position = new Vector2(clampedX, Position.Y);
 
-        if (input.IsDown(Keys.Space) && _fireCooldownRemaining <= 0f)
+        if (input.IsFireHeld() && _fireCooldownRemaining <= 0f)
         {
             Fire(bullets);
-            _fireCooldownRemaining = IsRapidFireActive ? RapidFireCooldown : BaseFireCooldown;
+            _fireCooldownRemaining = IsTripleShotActive ? TripleShotCooldown : BaseFireCooldown;
         }
     }
 
     public bool TryTakeDamage()
     {
-        if (InvulnerabilityRemaining > 0f)
+        if (IsShieldActive || DamageRecoveryRemaining > 0f)
         {
             return false;
         }
 
         Lives = Math.Max(0, Lives - 1);
-        InvulnerabilityRemaining = 1.2f;
+        DamageRecoveryRemaining = 1.1f;
         return true;
     }
 
@@ -82,11 +83,14 @@ public sealed class Player : Entity
     {
         switch (type)
         {
-            case PowerUpType.DoubleShot:
-                DoubleShotRemaining = MathF.Max(DoubleShotRemaining, duration);
+            case PowerUpType.ExtraLife:
+                Lives = Math.Min(GameConfig.MaxLives, Lives + 1);
                 break;
-            default:
-                RapidFireRemaining = MathF.Max(RapidFireRemaining, duration);
+            case PowerUpType.TripleShot:
+                TripleShotRemaining = MathF.Max(TripleShotRemaining, duration);
+                break;
+            case PowerUpType.Shield:
+                ShieldRemaining = MathF.Max(ShieldRemaining, duration);
                 break;
         }
     }
@@ -98,7 +102,7 @@ public sealed class Player : Entity
             return;
         }
 
-        if (InvulnerabilityRemaining > 0f && ((int)(InvulnerabilityRemaining * 20f) % 2 == 0))
+        if (!IsShieldActive && DamageRecoveryRemaining > 0f && ((int)(DamageRecoveryRemaining * 20f) % 2 == 0))
         {
             return;
         }
@@ -112,26 +116,33 @@ public sealed class Player : Entity
         PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 23, y + 3, 6, 10), new Color(240, 245, 255));
         PrimitiveRenderer.DrawOutline(spriteBatch, pixel, new Rectangle(x + 16, y + 8, 20, 16), 1, new Color(80, 110, 160));
 
-        if (IsDoubleShotActive)
+        if (IsTripleShotActive)
         {
             PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 8, y + 10, 3, 6), new Color(110, 245, 255));
+            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 24, y + 5, 3, 6), new Color(110, 245, 255));
             PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 41, y + 10, 3, 6), new Color(110, 245, 255));
         }
 
         var flameHeight = 6 + (int)(MathF.Abs(MathF.Sin(_enginePulse * 16f)) * 4f);
         PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 21, y + 24, 4, flameHeight), new Color(255, 105, 60));
         PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(x + 27, y + 24, 4, flameHeight), new Color(255, 145, 65));
+
+        if (IsShieldActive)
+        {
+            PrimitiveRenderer.DrawOutline(spriteBatch, pixel, new Rectangle(x - 4, y - 4, (int)Size.X + 8, (int)Size.Y + 8), 2, new Color(130, 255, 215));
+        }
     }
 
     private void Fire(List<Projectile> bullets)
     {
-        if (IsDoubleShotActive)
+        if (IsTripleShotActive)
         {
-            bullets.Add(new Projectile(new Vector2(Position.X + 12, Position.Y - 12), new Vector2(0f, -510f), false, new Color(120, 255, 170)));
-            bullets.Add(new Projectile(new Vector2(Position.X + Size.X - 18, Position.Y - 12), new Vector2(0f, -510f), false, new Color(120, 255, 170)));
+            bullets.Add(new Projectile(new Vector2(Position.X + 10, Position.Y - 12), new Vector2(-110f, -520f), ProjectileType.PlayerShot));
+            bullets.Add(new Projectile(new Vector2(Position.X + (Size.X * 0.5f) - 2f, Position.Y - 14), new Vector2(0f, -560f), ProjectileType.PlayerShot));
+            bullets.Add(new Projectile(new Vector2(Position.X + Size.X - 14, Position.Y - 12), new Vector2(110f, -520f), ProjectileType.PlayerShot));
             return;
         }
 
-        bullets.Add(new Projectile(new Vector2(Position.X + (Size.X * 0.5f) - 3f, Position.Y - 12), new Vector2(0f, -490f), false, new Color(120, 255, 170)));
+        bullets.Add(new Projectile(new Vector2(Position.X + (Size.X * 0.5f) - 2f, Position.Y - 12), new Vector2(0f, -540f), ProjectileType.PlayerShot));
     }
 }

@@ -1,3 +1,4 @@
+using GalacticCoopShooter.Core;
 using GalacticCoopShooter.Entities;
 using Microsoft.Xna.Framework;
 
@@ -9,9 +10,9 @@ public sealed class WaveManager
     private readonly Random _random;
     private readonly List<Enemy> _enemies = [];
 
-    private float _direction = 1f;
-    private float _groupSpeed;
-    private float _eggChancePerSecond;
+    private int _levelIndex;
+    private int _waveNumber;
+    private bool _isBossEncounter;
 
     public WaveManager(Rectangle movementBounds, Random random)
     {
@@ -19,31 +20,63 @@ public sealed class WaveManager
         _random = random;
     }
 
-    public int CurrentWave { get; private set; }
-
     public IReadOnlyList<Enemy> Enemies => _enemies;
-
     public bool IsWaveCleared => _enemies.Count == 0;
+    public bool IsBossEncounter => _isBossEncounter;
+    public bool IsCampaignComplete { get; private set; }
+    public LevelDefinition CurrentLevel => CampaignData.Levels[_levelIndex];
+    public int CurrentLevelNumber => CurrentLevel.Number;
+    public int CurrentWaveNumber => _waveNumber;
 
-    public void StartWave(int waveNumber)
+    public void StartCampaign()
     {
-        CurrentWave = waveNumber;
-        _direction = 1f;
-        _groupSpeed = 34f + ((waveNumber - 1) * 14f);
-        _eggChancePerSecond = 0.48f + ((waveNumber - 1) * 0.18f);
-
-        SpawnFormation(waveNumber);
+        _levelIndex = 0;
+        _waveNumber = 1;
+        _isBossEncounter = false;
+        IsCampaignComplete = false;
+        SpawnCurrentEncounter();
     }
 
-    public void Update(float deltaTime, List<Projectile> enemyEggs)
+    public bool AdvanceEncounter()
     {
-        if (_enemies.Count == 0)
+        if (IsCampaignComplete)
         {
-            return;
+            return false;
         }
 
-        MoveFormation(deltaTime);
-        SpawnEnemyEggs(deltaTime, enemyEggs);
+        if (_isBossEncounter)
+        {
+            if (_levelIndex >= CampaignData.Levels.Count - 1)
+            {
+                IsCampaignComplete = true;
+                return false;
+            }
+
+            _levelIndex++;
+            _waveNumber = 1;
+            _isBossEncounter = false;
+            SpawnCurrentEncounter();
+            return true;
+        }
+
+        if (_waveNumber < GameConfig.RegularWavesPerLevel)
+        {
+            _waveNumber++;
+            SpawnCurrentEncounter();
+            return true;
+        }
+
+        _isBossEncounter = true;
+        SpawnCurrentEncounter();
+        return true;
+    }
+
+    public void Update(float deltaTime, Vector2 playerCenter, List<Projectile> enemyProjectiles)
+    {
+        for (var i = 0; i < _enemies.Count; i++)
+        {
+            _enemies[i].UpdateBehavior(deltaTime, playerCenter, _movementBounds, enemyProjectiles, _random);
+        }
     }
 
     public void PruneInactive()
@@ -51,128 +84,93 @@ public sealed class WaveManager
         _enemies.RemoveAll(enemy => !enemy.IsActive);
     }
 
-    private void SpawnFormation(int waveNumber)
+    private void SpawnCurrentEncounter()
     {
         _enemies.Clear();
 
-        var rows = 3 + Math.Min(2, waveNumber);
-        const int columns = 9;
-
-        const float spacingX = 74f;
-        const float spacingY = 52f;
-
-        var formationWidth = (columns - 1) * spacingX;
-        var startX = (_movementBounds.Width - formationWidth) * 0.5f;
-        const float startY = 86f;
-
-        for (var row = 0; row < rows; row++)
+        if (_isBossEncounter)
         {
-            for (var column = 0; column < columns; column++)
-            {
-                var enemyType = ResolveEnemyType(waveNumber, row, column);
-                var enemyPosition = new Vector2(startX + (column * spacingX), startY + (row * spacingY));
-
-                var enemy = new Enemy(enemyPosition, enemyType, column);
-                enemy.ResetShotCooldown(_random);
-                _enemies.Add(enemy);
-            }
-        }
-    }
-
-    private static EnemyType ResolveEnemyType(int waveNumber, int row, int column)
-    {
-        if (waveNumber >= 3 && (row + column) % 4 == 0)
-        {
-            return EnemyType.Rapid;
-        }
-
-        if (waveNumber >= 2 && (row + column) % 3 == 0)
-        {
-            return EnemyType.Tough;
-        }
-
-        return EnemyType.Normal;
-    }
-
-    private void MoveFormation(float deltaTime)
-    {
-        var minX = float.MaxValue;
-        var maxX = float.MinValue;
-
-        for (var i = 0; i < _enemies.Count; i++)
-        {
-            var enemy = _enemies[i];
-            minX = MathF.Min(minX, enemy.Position.X);
-            maxX = MathF.Max(maxX, enemy.Position.X + enemy.Size.X);
-        }
-
-        var deltaX = _direction * _groupSpeed * deltaTime;
-        var projectedMinX = minX + deltaX;
-        var projectedMaxX = maxX + deltaX;
-
-        var wouldHitLeft = projectedMinX <= _movementBounds.Left + 16f;
-        var wouldHitRight = projectedMaxX >= _movementBounds.Right - 16f;
-
-        if (wouldHitLeft || wouldHitRight)
-        {
-            _direction *= -1f;
-
-            for (var i = 0; i < _enemies.Count; i++)
-            {
-                _enemies[i].Move(new Vector2(0f, 24f));
-            }
-
+            SpawnBoss();
             return;
         }
 
-        for (var i = 0; i < _enemies.Count; i++)
+        var rows = GetWaveRows(CurrentLevelNumber, _waveNumber);
+
+        for (var rowIndex = 0; rowIndex < rows.Length; rowIndex++)
         {
-            _enemies[i].Move(new Vector2(deltaX, 0f));
+            SpawnRow(rows[rowIndex], rowIndex);
         }
     }
 
-    private void SpawnEnemyEggs(float deltaTime, List<Projectile> enemyEggs)
+    private void SpawnBoss()
     {
-        var bottomShooters = new Dictionary<int, Enemy>();
+        var position = new Vector2((GameConfig.ScreenWidth * 0.5f) - 74f, 54f);
+        _enemies.Add(new Enemy(position, EnemyType.Boss, CurrentLevelNumber, _waveNumber, 0));
+    }
 
-        for (var i = 0; i < _enemies.Count; i++)
+    private void SpawnRow(EnemyType[] row, int rowIndex)
+    {
+        var spacing = row.Length >= 6 ? 110f : 126f;
+        var totalWidth = (row.Length - 1) * spacing;
+        var startX = (GameConfig.ScreenWidth - totalWidth) * 0.5f - 18f;
+        var y = -42f - (rowIndex * 82f);
+
+        for (var i = 0; i < row.Length; i++)
         {
-            var enemy = _enemies[i];
-
-            if (bottomShooters.TryGetValue(enemy.GridColumn, out var existing))
-            {
-                if (enemy.Position.Y > existing.Position.Y)
-                {
-                    bottomShooters[enemy.GridColumn] = enemy;
-                }
-            }
-            else
-            {
-                bottomShooters[enemy.GridColumn] = enemy;
-            }
+            var position = new Vector2(startX + (i * spacing), y - (_random.NextSingle() * 8f));
+            _enemies.Add(new Enemy(position, row[i], CurrentLevelNumber, _waveNumber, rowIndex * 10 + i));
         }
+    }
 
-        foreach (var shooter in bottomShooters.Values)
+    private static EnemyType[][] GetWaveRows(int levelNumber, int waveNumber)
+    {
+        return levelNumber switch
         {
-            shooter.ShotCooldown -= deltaTime;
-
-            if (shooter.ShotCooldown > 0f)
+            1 => waveNumber switch
             {
-                continue;
-            }
-
-            var fireChance = _eggChancePerSecond * shooter.FireRateMultiplier * deltaTime;
-
-            if (_random.NextSingle() > fireChance)
+                1 => [new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                2 => [new[] { EnemyType.Green, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                3 => [new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                4 => [new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red }],
+                5 => [new[] { EnemyType.Red, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                _ => [new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+            },
+            2 => waveNumber switch
             {
-                continue;
+                1 => [new[] { EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Green }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red }],
+                2 => [new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }],
+                3 => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                4 => [new[] { EnemyType.Blue, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red, EnemyType.Red }],
+                5 => [new[] { EnemyType.Green, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Green }, new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue }],
+                _ => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+            },
+            3 => waveNumber switch
+            {
+                1 => [new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red }],
+                2 => [new[] { EnemyType.Green, EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow, EnemyType.Green }, new[] { EnemyType.Blue, EnemyType.Blue, EnemyType.Blue }],
+                3 => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                4 => [new[] { EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow }, new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue }],
+                5 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
+                _ => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+            },
+            4 => waveNumber switch
+            {
+                1 => [new[] { EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                2 => [new[] { EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow }],
+                3 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }],
+                4 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red, EnemyType.Red }],
+                5 => [new[] { EnemyType.Yellow, EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green }],
+                _ => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Yellow }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+            },
+            _ => waveNumber switch
+            {
+                1 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
+                2 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Blue, EnemyType.Red }],
+                3 => [new[] { EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
+                4 => [new[] { EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow }],
+                5 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Blue, EnemyType.Red }],
+                _ => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow, EnemyType.Green }]
             }
-
-            var eggPosition = new Vector2(shooter.Position.X + (shooter.Size.X * 0.5f) - 3f, shooter.Position.Y + shooter.Size.Y);
-            var eggVelocity = new Vector2(0f, 210f + ((CurrentWave - 1) * 26f));
-
-            enemyEggs.Add(new Projectile(eggPosition, eggVelocity, true, new Color(250, 232, 145)));
-            shooter.ResetShotCooldown(_random);
-        }
+        };
     }
 }

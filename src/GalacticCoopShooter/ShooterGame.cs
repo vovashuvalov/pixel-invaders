@@ -26,10 +26,10 @@ public sealed class ShooterGame : Game
         _graphics.SynchronizeWithVerticalRetrace = true;
 
         IsFixedTimeStep = true;
-        IsMouseVisible = false;
+        IsMouseVisible = true;
 
         Content.RootDirectory = "Content";
-        Window.Title = "Galactic Coop Shooter";
+        Window.Title = "Pixel Invaders";
 
         BuildStarfield();
     }

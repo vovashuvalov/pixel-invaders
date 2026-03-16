@@ -1,43 +1,45 @@
-# Playtest Checklist
-
-Use this as the testing place for manual verification while running the game.
+# Pixel Invaders Playtest Checklist
 
 ## Startup
 
-- [ ] Game launches from CLI (`dotnet run ...`) without crashes.
-- [ ] Main menu appears with Start / Controls / Quit.
+- [ ] `dotnet run --project src/GalacticCoopShooter/GalacticCoopShooter.csproj` launches the game
+- [ ] Main menu shows `Start`, `Controls`, and `Quit`
+- [ ] Controls overlay mentions keyboard and mouse fire input
 
-## Controls
+## Controls and Core Feel
 
-- [ ] Player moves left/right with both Arrow keys and A/D.
-- [ ] Player cannot leave screen bounds.
-- [ ] Space shoots with cooldown.
+- [ ] Ship moves with both `WASD` and arrow keys
+- [ ] Ship stays inside screen bounds
+- [ ] Holding `Space` fires continuously
+- [ ] Holding left mouse button also fires continuously
+- [ ] `Esc` pauses and resumes correctly
 
-## Core Combat
+## Campaign Flow
 
-- [ ] Bullets destroy enemies and increase score.
-- [ ] Enemies sweep left/right and drop when hitting edges.
-- [ ] Eggs damage player and reduce lives.
-- [ ] Hearts display exactly current lives.
+- [ ] Level 1 starts in `Earth Orbit`
+- [ ] Each level contains 6 regular waves before the boss
+- [ ] Boss appears at the end of every level
+- [ ] Clearing the final boss shows the victory screen
 
-## Waves and Difficulty
+## Enemies
 
-- [ ] Wave banner appears at wave start.
-- [ ] Wave 2 introduces tougher enemies.
-- [ ] Wave 3 introduces rapid shooter enemies.
-- [ ] Enemy pressure increases each wave.
+- [ ] Green enemies drift straight down
+- [ ] Red enemies dive toward the player lane
+- [ ] Blue enemies shoot lasers
+- [ ] Yellow enemies leave mines
+- [ ] Boss crab fires multi-shot attacks and mines
 
 ## Power-ups
 
-- [ ] Power-up drops can appear from defeated enemies.
-- [ ] Rapid Fire temporarily shortens fire cooldown.
-- [ ] Double Shot temporarily fires two bullets.
-- [ ] Active power-up timers show on HUD.
+- [ ] `Extra Life` increases lives up to the cap
+- [ ] `Triple Shot` lasts 10 seconds
+- [ ] `Bomb` clears current enemies and projectiles
+- [ ] `Shield` lasts 5 seconds and blocks damage
+- [ ] Active timed power-ups appear on the HUD
 
-## States
+## Combat and States
 
-- [ ] Esc opens pause overlay with Resume / Restart / Main Menu.
-- [ ] Resume returns to same run.
-- [ ] Restart resets a fresh run.
-- [ ] Losing all lives opens game over screen.
-- [ ] Clearing final wave shows victory screen.
+- [ ] Score increases when enemies are destroyed
+- [ ] Enemy projectiles damage the player
+- [ ] Reaching zero lives opens the game over screen
+- [ ] Pause menu supports `Resume`, `Restart`, and `Main Menu`

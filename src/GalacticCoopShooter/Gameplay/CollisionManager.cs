@@ -3,21 +3,21 @@ using Microsoft.Xna.Framework;
 
 namespace GalacticCoopShooter.Gameplay;
 
-public readonly record struct CollisionReport(int ScoreDelta, int HitsTaken, int PowerUpsCollected);
+public readonly record struct CollisionReport(int ScoreDelta, int HitsTaken, IReadOnlyList<PowerUpType> CollectedPowerUps);
 
 public sealed class CollisionManager
 {
     public CollisionReport Resolve(
         Player player,
         List<Projectile> playerBullets,
-        List<Projectile> enemyEggs,
+        List<Projectile> enemyProjectiles,
         IReadOnlyList<Enemy> enemies,
         List<PowerUp> powerUps,
         Random random)
     {
         var scoreDelta = 0;
         var hitsTaken = 0;
-        var powerUpsCollected = 0;
+        var collectedPowerUps = new List<PowerUpType>();
 
         for (var i = 0; i < playerBullets.Count; i++)
         {
@@ -50,10 +50,10 @@ public sealed class CollisionManager
                 {
                     scoreDelta += enemy.ScoreValue;
 
-                    if (random.NextSingle() < 0.2f)
+                    if (random.NextSingle() < 0.24f)
                     {
-                        var type = random.Next(0, 2) == 0 ? PowerUpType.RapidFire : PowerUpType.DoubleShot;
-                        var position = new Vector2(enemy.Position.X + (enemy.Size.X * 0.5f) - 11f, enemy.Position.Y + (enemy.Size.Y * 0.5f) - 11f);
+                        var type = RollPowerUp(random);
+                        var position = new Vector2(enemy.Position.X + (enemy.Size.X * 0.5f) - 13f, enemy.Position.Y + (enemy.Size.Y * 0.5f) - 13f);
                         powerUps.Add(new PowerUp(type, position));
                     }
                 }
@@ -62,16 +62,16 @@ public sealed class CollisionManager
             }
         }
 
-        for (var i = 0; i < enemyEggs.Count; i++)
+        for (var i = 0; i < enemyProjectiles.Count; i++)
         {
-            var egg = enemyEggs[i];
+            var projectile = enemyProjectiles[i];
 
-            if (!egg.IsActive || !egg.Bounds.Intersects(player.Bounds))
+            if (!projectile.IsActive || !projectile.Bounds.Intersects(player.Bounds))
             {
                 continue;
             }
 
-            egg.IsActive = false;
+            projectile.IsActive = false;
 
             if (player.TryTakeDamage())
             {
@@ -105,11 +105,32 @@ public sealed class CollisionManager
                 continue;
             }
 
-            player.ApplyPowerUp(powerUp.Type, powerUp.DurationSeconds);
+            collectedPowerUps.Add(powerUp.Type);
             powerUp.IsActive = false;
-            powerUpsCollected++;
         }
 
-        return new CollisionReport(scoreDelta, hitsTaken, powerUpsCollected);
+        return new CollisionReport(scoreDelta, hitsTaken, collectedPowerUps);
+    }
+
+    private static PowerUpType RollPowerUp(Random random)
+    {
+        var roll = random.NextSingle();
+
+        if (roll < 0.12f)
+        {
+            return PowerUpType.ExtraLife;
+        }
+
+        if (roll < 0.48f)
+        {
+            return PowerUpType.TripleShot;
+        }
+
+        if (roll < 0.68f)
+        {
+            return PowerUpType.Bomb;
+        }
+
+        return PowerUpType.Shield;
     }
 }

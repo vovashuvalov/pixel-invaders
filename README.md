@@ -1,6 +1,6 @@
-# Galactic Coop Shooter
+# Pixel Invaders
 
-A complete C# 2D arcade shooter built with MonoGame (DesktopGL). You pilot a ship, clear enemy chicken formations, dodge eggs, and survive escalating waves.
+`Pixel Invaders` is a C# 2D arcade shooter built with MonoGame DesktopGL. You pilot a starfighter, clear waves of pixel aliens, collect power-ups, and survive five themed levels that end with boss fights.
 
 ## Build and Run
 
@@ -11,7 +11,7 @@ dotnet build GalacticCoopShooter.sln
 dotnet run --project src/GalacticCoopShooter/GalacticCoopShooter.csproj
 ```
 
-Shortcuts:
+Shortcut scripts:
 
 ```bash
 ./scripts/build-game.sh
@@ -20,34 +20,41 @@ Shortcuts:
 
 ## Controls
 
-- Move: `A` / `D` or `Left` / `Right`
-- Shoot: `Space`
+- Move: `WASD` or `Arrow Keys`
+- Fire: hold `Space` or `Left Mouse Button`
 - Pause: `Esc`
-- Menu Select: `Enter` (and `Up` / `Down` or `W` / `S`)
+- Menu navigation: `WASD` or `Arrow Keys`, confirm with `Enter` or `Space`
 
-## Gameplay Summary
+## Game Overview
 
-- Player starts with 3 lives (heart HUD).
-- Enemy chickens spawn in invader-style grids and move as a group.
-- Enemies drop eggs with randomized cooldowns and probability.
-- 3 waves minimum, each increasing speed/fire pressure and enemy mix.
-- Wave 2+ introduces tougher chickens (2 hit) and wave 3 adds rapid shooters.
-- Power-ups drop from defeated enemies:
-  - Rapid Fire (temporary)
-  - Double Shot (temporary)
-- States included:
-  - Main Menu (Start / Controls / Quit)
-  - Pause (Resume / Restart / Main Menu)
-  - Game Over / Victory (Final score + restart/menu)
+- 5 levels: `Earth Orbit`, `Moon`, `Asteroids`, `Mars`, `Final Front`
+- 6 regular waves per level plus a boss encounter
+- 5 enemy types:
+  - `Green` drifter
+  - `Red` diver
+  - `Blue` laser shooter
+  - `Yellow` miner
+  - `Boss` crab alien
+- 4 power-ups:
+  - `Extra Life`
+  - `Triple Shot` for 10 seconds
+  - `Bomb` that clears the screen and heavily damages bosses
+  - `Shield` for 5 seconds
 
 ## Project Structure
 
-- `GalacticCoopShooter.sln`: solution file.
-- `src/GalacticCoopShooter/ShooterGame.cs`: MonoGame bootstrap + background rendering.
-- `src/GalacticCoopShooter/Core`: config, input manager, state machine interfaces.
-- `src/GalacticCoopShooter/Entities`: player, enemies, projectiles, power-ups.
-- `src/GalacticCoopShooter/Gameplay`: wave spawning/movement and collision resolution.
-- `src/GalacticCoopShooter/States`: menu, play, pause, game-over states.
-- `src/GalacticCoopShooter/Rendering`: primitive shape + pixel text renderers.
-- `scripts`: build/run helper scripts.
-- `playtest/PLAYTEST_CHECKLIST.md`: test pass checklist to validate game behavior.
+- `GalacticCoopShooter.sln` - solution entry point
+- `src/GalacticCoopShooter/ShooterGame.cs` - MonoGame bootstrap and shared background rendering
+- `src/GalacticCoopShooter/Core` - config, input manager, and state machine interfaces
+- `src/GalacticCoopShooter/Gameplay/LevelDefinition.cs` - campaign level metadata and theme data
+- `src/GalacticCoopShooter/Gameplay/WaveManager.cs` - level progression, wave spawning, and boss progression
+- `src/GalacticCoopShooter/Gameplay/CollisionManager.cs` - AABB collision resolution and power-up drops
+- `src/GalacticCoopShooter/Entities` - player, enemies, power-ups, and projectile types
+- `src/GalacticCoopShooter/States` - menu, play, pause, and game-over states
+- `src/GalacticCoopShooter/Rendering` - pixel font and primitive drawing helpers
+- `playtest/PLAYTEST_CHECKLIST.md` - manual verification checklist
+
+## Notes
+
+- Visuals are generated from primitive shapes only.
+- The game is fully CLI-runnable with `dotnet build` and `dotnet run`.

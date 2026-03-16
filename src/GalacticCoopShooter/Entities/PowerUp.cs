@@ -6,8 +6,10 @@ namespace GalacticCoopShooter.Entities;
 
 public enum PowerUpType
 {
-    RapidFire,
-    DoubleShot
+    ExtraLife,
+    TripleShot,
+    Bomb,
+    Shield
 }
 
 public sealed class PowerUp : Entity
@@ -15,19 +17,27 @@ public sealed class PowerUp : Entity
     private readonly Color _color;
 
     public PowerUp(PowerUpType type, Vector2 position)
-        : base(position, new Vector2(22f, 22f))
+        : base(position, new Vector2(26f, 26f))
     {
         Type = type;
 
         switch (type)
         {
-            case PowerUpType.DoubleShot:
-                DurationSeconds = 9f;
-                _color = new Color(110, 240, 255);
+            case PowerUpType.ExtraLife:
+                DurationSeconds = 0f;
+                _color = new Color(230, 70, 96);
+                break;
+            case PowerUpType.TripleShot:
+                DurationSeconds = 10f;
+                _color = new Color(116, 235, 255);
+                break;
+            case PowerUpType.Bomb:
+                DurationSeconds = 0f;
+                _color = new Color(255, 186, 86);
                 break;
             default:
-                DurationSeconds = 7f;
-                _color = new Color(255, 180, 82);
+                DurationSeconds = 5f;
+                _color = new Color(135, 255, 200);
                 break;
         }
     }
@@ -37,7 +47,7 @@ public sealed class PowerUp : Entity
 
     public override void Update(float deltaTime)
     {
-        Position += new Vector2(0f, 130f * deltaTime);
+        Position += new Vector2(0f, 120f * deltaTime);
     }
 
     public bool IsOutOfBounds(Rectangle bounds)
@@ -57,16 +67,26 @@ public sealed class PowerUp : Entity
         PrimitiveRenderer.DrawRect(spriteBatch, pixel, rectangle, _color * 0.95f);
         PrimitiveRenderer.DrawOutline(spriteBatch, pixel, rectangle, 1, new Color(245, 245, 245));
 
-        if (Type == PowerUpType.RapidFire)
+        switch (Type)
         {
-            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 8, rectangle.Y + 4, 3, 14), new Color(55, 30, 10));
-            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 11, rectangle.Y + 4, 4, 4), new Color(55, 30, 10));
-            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 6, rectangle.Y + 12, 5, 4), new Color(55, 30, 10));
-        }
-        else
-        {
-            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 5, rectangle.Y + 4, 4, 14), new Color(10, 45, 75));
-            PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 13, rectangle.Y + 4, 4, 14), new Color(10, 45, 75));
+            case PowerUpType.ExtraLife:
+                PrimitiveRenderer.DrawHeart(spriteBatch, pixel, new Vector2(rectangle.X + 4, rectangle.Y + 5), 2, new Color(255, 236, 242));
+                break;
+            case PowerUpType.TripleShot:
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 5, rectangle.Y + 5, 3, 14), new Color(10, 55, 80));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 11, rectangle.Y + 3, 3, 18), new Color(10, 55, 80));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 17, rectangle.Y + 5, 3, 14), new Color(10, 55, 80));
+                break;
+            case PowerUpType.Bomb:
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 8, rectangle.Y + 8, 10, 10), new Color(55, 32, 24));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 11, rectangle.Y + 3, 4, 5), new Color(255, 245, 165));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 4, rectangle.Y + 12, 4, 2), new Color(255, 245, 165));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 18, rectangle.Y + 12, 4, 2), new Color(255, 245, 165));
+                break;
+            default:
+                PrimitiveRenderer.DrawOutline(spriteBatch, pixel, new Rectangle(rectangle.X + 5, rectangle.Y + 5, 16, 16), 2, new Color(235, 250, 255));
+                PrimitiveRenderer.DrawRect(spriteBatch, pixel, new Rectangle(rectangle.X + 11, rectangle.Y + 11, 4, 4), new Color(235, 250, 255));
+                break;
         }
     }
 }

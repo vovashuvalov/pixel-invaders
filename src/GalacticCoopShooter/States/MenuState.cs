@@ -69,16 +69,17 @@ public sealed class MenuState : IGameState
 
     public void Draw(GameTime gameTime)
     {
-        DrawCenteredText("GALACTIC COOP SHOOTER", 120, 4, new Color(230, 245, 255));
-        DrawCenteredText("SPACE CHICKEN ARCADE", 190, 2, new Color(120, 195, 255));
+        DrawCenteredText("PIXEL INVADERS", 120, 5, new Color(230, 245, 255));
+        DrawCenteredText("RETRO VERTICAL SHOOTER", 196, 2, new Color(120, 195, 255));
+        DrawCenteredText("5 LEVELS  5 ALIEN TYPES  4 POWERUPS", 242, 2, new Color(170, 210, 255));
 
         for (var i = 0; i < _menuOptions.Length; i++)
         {
             var color = i == _selectedIndex ? new Color(120, 255, 175) : new Color(220, 225, 245);
-            DrawCenteredText(_menuOptions[i], 300 + (i * 58), 3, color);
+            DrawCenteredText(_menuOptions[i], 324 + (i * 58), 3, color);
         }
 
-        DrawCenteredText("UP DOWN OR W S  ENTER TO SELECT", 560, 2, new Color(165, 185, 215));
+        DrawCenteredText("UP DOWN OR W S  ENTER TO SELECT", 584, 2, new Color(165, 185, 215));
 
         if (!_showControls)
         {
@@ -89,11 +90,12 @@ public sealed class MenuState : IGameState
         PrimitiveRenderer.DrawOutline(_game.SpriteBatch, _game.Pixel, new Rectangle(140, 170, 680, 360), 2, new Color(110, 165, 245));
 
         DrawCenteredText("CONTROLS", 208, 3, new Color(235, 245, 255));
-        DrawCenteredText("MOVE  A D OR LEFT RIGHT", 280, 2, new Color(205, 220, 245));
-        DrawCenteredText("SHOOT SPACE", 324, 2, new Color(205, 220, 245));
-        DrawCenteredText("PAUSE ESC", 368, 2, new Color(205, 220, 245));
-        DrawCenteredText("DESTROY WAVES OF SPACE CHICKENS", 412, 2, new Color(205, 220, 245));
-        DrawCenteredText("PRESS ENTER TO RETURN", 470, 2, new Color(120, 255, 175));
+        DrawCenteredText("MOVE  WASD OR ARROWS", 272, 2, new Color(205, 220, 245));
+        DrawCenteredText("FIRE  HOLD SPACE OR LEFT MOUSE", 314, 2, new Color(205, 220, 245));
+        DrawCenteredText("PAUSE  ESC", 356, 2, new Color(205, 220, 245));
+        DrawCenteredText("POWERUPS  LIFE  TRIPLE  BOMB  SHIELD", 410, 2, new Color(205, 220, 245));
+        DrawCenteredText("CLEAR 5 LEVELS AND DEFEAT EVERY BOSS", 452, 2, new Color(205, 220, 245));
+        DrawCenteredText("PRESS ENTER TO RETURN", 494, 2, new Color(120, 255, 175));
     }
 
     private void DrawCenteredText(string text, int y, int scale, Color color)

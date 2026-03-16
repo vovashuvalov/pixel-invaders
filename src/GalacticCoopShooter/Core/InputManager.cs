@@ -6,11 +6,15 @@ public sealed class InputManager
 {
     private KeyboardState _currentKeyboard;
     private KeyboardState _previousKeyboard;
+    private MouseState _currentMouse;
+    private MouseState _previousMouse;
 
     public void Update()
     {
         _previousKeyboard = _currentKeyboard;
         _currentKeyboard = Keyboard.GetState();
+        _previousMouse = _currentMouse;
+        _currentMouse = Mouse.GetState();
     }
 
     public bool IsDown(Keys key)
@@ -47,5 +51,20 @@ public sealed class InputManager
         }
 
         return false;
+    }
+
+    public bool IsLeftMouseDown()
+    {
+        return _currentMouse.LeftButton == ButtonState.Pressed;
+    }
+
+    public bool IsLeftMousePressed()
+    {
+        return _currentMouse.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released;
+    }
+
+    public bool IsFireHeld()
+    {
+        return IsDown(Keys.Space) || IsLeftMouseDown();
     }
 }

@@ -8,17 +8,19 @@ public sealed class GameOverState : IGameState
 {
     private readonly ShooterGame _game;
     private readonly int _finalScore;
-    private readonly int _reachedWave;
+    private readonly int _reachedLevel;
+    private readonly string _reachedLevelName;
     private readonly bool _won;
 
     private readonly string[] _options = ["RESTART", "MAIN MENU"];
     private int _selectedIndex;
 
-    public GameOverState(ShooterGame game, int finalScore, int reachedWave, bool won)
+    public GameOverState(ShooterGame game, int finalScore, int reachedLevel, string reachedLevelName, bool won)
     {
         _game = game;
         _finalScore = finalScore;
-        _reachedWave = reachedWave;
+        _reachedLevel = reachedLevel;
+        _reachedLevelName = reachedLevelName;
         _won = won;
     }
 
@@ -56,17 +58,18 @@ public sealed class GameOverState : IGameState
     public void Draw(GameTime gameTime)
     {
         var title = _won ? "VICTORY" : "GAME OVER";
-        var subtitle = _won ? "YOU CLEARED ALL WAVES" : "THE CHICKENS OVERWHELMED YOU";
+        var subtitle = _won ? "EARTH IS SAFE" : "THE INVADERS BROKE THROUGH";
 
         DrawCenteredText(title, 180, 5, _won ? new Color(130, 255, 180) : new Color(255, 125, 120));
         DrawCenteredText(subtitle, 262, 2, new Color(210, 220, 240));
         DrawCenteredText($"FINAL SCORE:{_finalScore}", 318, 3, new Color(235, 245, 255));
-        DrawCenteredText($"WAVE REACHED:{_reachedWave}", 366, 2, new Color(195, 210, 240));
+        DrawCenteredText($"LEVEL REACHED:{_reachedLevel}", 366, 2, new Color(195, 210, 240));
+        DrawCenteredText(_reachedLevelName, 406, 2, new Color(145, 225, 255));
 
         for (var i = 0; i < _options.Length; i++)
         {
             var color = i == _selectedIndex ? new Color(120, 255, 175) : new Color(225, 230, 245);
-            DrawCenteredText(_options[i], 450 + (i * 58), 3, color);
+            DrawCenteredText(_options[i], 486 + (i * 58), 3, color);
         }
     }
 
