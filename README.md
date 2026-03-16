@@ -18,6 +18,36 @@ Shortcut scripts:
 ./scripts/run-game.sh
 ```
 
+## Open on Mac
+
+If the project is already on your Mac, open it from Terminal:
+
+```bash
+cd /Users/vladimirshuvalov/Documents/galactic-coop-shooter
+open .
+```
+
+Open it in an editor:
+
+```bash
+cd /Users/vladimirshuvalov/Documents/galactic-coop-shooter
+open -a "Visual Studio Code" .
+```
+
+Or open the solution in Rider:
+
+```bash
+cd /Users/vladimirshuvalov/Documents/galactic-coop-shooter
+open -a "Rider" GalacticCoopShooter.sln
+```
+
+Then run the game from the same folder:
+
+```bash
+export PATH="$HOME/.dotnet:$PATH"
+dotnet run --project src/GalacticCoopShooter/GalacticCoopShooter.csproj
+```
+
 ## Controls
 
 - Move: `WASD` or `Arrow Keys`
