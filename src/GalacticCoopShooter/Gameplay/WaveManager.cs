@@ -130,46 +130,31 @@ public sealed class WaveManager
             {
                 1 => [new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
                 2 => [new[] { EnemyType.Green, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                3 => [new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                4 => [new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red }],
-                5 => [new[] { EnemyType.Red, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                _ => [new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+                _ => [new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
             },
             2 => waveNumber switch
             {
                 1 => [new[] { EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Green }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red }],
                 2 => [new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }],
-                3 => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                4 => [new[] { EnemyType.Blue, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red, EnemyType.Red }],
-                5 => [new[] { EnemyType.Green, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Green }, new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue }],
-                _ => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Green, EnemyType.Blue, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+                _ => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }]
             },
             3 => waveNumber switch
             {
                 1 => [new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Blue, EnemyType.Green, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red }],
-                2 => [new[] { EnemyType.Green, EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow, EnemyType.Green }, new[] { EnemyType.Blue, EnemyType.Blue, EnemyType.Blue }],
-                3 => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                4 => [new[] { EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow }, new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue }],
-                5 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
-                _ => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Green }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+                2 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
+                _ => [new[] { EnemyType.Yellow, EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Yellow }, new[] { EnemyType.Blue, EnemyType.Green, EnemyType.Blue }]
             },
             4 => waveNumber switch
             {
                 1 => [new[] { EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green, EnemyType.Green }],
                 2 => [new[] { EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow }],
-                3 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }],
-                4 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Red, EnemyType.Red }],
-                5 => [new[] { EnemyType.Yellow, EnemyType.Red, EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Green, EnemyType.Green }],
-                _ => [new[] { EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Yellow }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }]
+                _ => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Green, EnemyType.Red, EnemyType.Green }]
             },
             _ => waveNumber switch
             {
                 1 => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
                 2 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Red, EnemyType.Red, EnemyType.Blue, EnemyType.Red }],
-                3 => [new[] { EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Green, EnemyType.Red }],
-                4 => [new[] { EnemyType.Blue, EnemyType.Red, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow }],
-                5 => [new[] { EnemyType.Yellow, EnemyType.Blue, EnemyType.Red, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red }, new[] { EnemyType.Green, EnemyType.Red, EnemyType.Blue, EnemyType.Red }],
-                _ => [new[] { EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Red }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow, EnemyType.Green }]
+                _ => [new[] { EnemyType.Red, EnemyType.Yellow, EnemyType.Blue, EnemyType.Yellow, EnemyType.Red, EnemyType.Blue }, new[] { EnemyType.Yellow, EnemyType.Green, EnemyType.Yellow, EnemyType.Green }]
             }
         };
     }

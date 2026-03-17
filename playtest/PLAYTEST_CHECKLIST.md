@@ -16,8 +16,8 @@
 
 ## Campaign Flow
 
-- [ ] Level 1 starts in `Earth Orbit`
-- [ ] Each level contains 6 regular waves before the boss
+- [ ] Level 1 starts in `Earth Station`
+- [ ] Each level contains 3 regular waves before the boss
 - [ ] Boss appears at the end of every level
 - [ ] Clearing the final boss shows the victory screen
 

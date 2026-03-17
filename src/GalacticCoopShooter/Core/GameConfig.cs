@@ -7,7 +7,7 @@ public static class GameConfig
     public const int ScreenWidth = 960;
     public const int ScreenHeight = 720;
     public const int TotalLevels = 5;
-    public const int RegularWavesPerLevel = 6;
+    public const int RegularWavesPerLevel = 3;
     public const int StartingLives = 3;
     public const int MaxLives = 5;
 

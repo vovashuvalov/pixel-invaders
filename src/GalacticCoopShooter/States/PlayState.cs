@@ -302,34 +302,107 @@ public sealed class PlayState : IGameState
     {
         var level = _waveManager.CurrentLevel;
 
-        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, GameConfig.ScreenBounds, level.PrimaryTint * 0.10f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, GameConfig.ScreenBounds, level.PrimaryTint * 0.12f);
 
         switch (level.Number)
         {
             case 1:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(48, 514, 180, 180), level.LandmarkTint * 0.85f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(92, 558, 92, 54), new Color(70, 210, 118) * 0.7f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(742, 110, 80, 80), level.AccentTint * 0.25f);
+                DrawPixelDisc(new Vector2(194f, 704f), 58, level.LandmarkTint, 4);
+                DrawPixelDisc(new Vector2(148f, 670f), 14, new Color(96, 208, 138), 4);
+                DrawPixelDisc(new Vector2(228f, 730f), 11, new Color(92, 198, 126), 4);
+                DrawPixelDisc(new Vector2(278f, 688f), 10, new Color(84, 188, 114), 4);
+                DrawSpaceStation(new Vector2(560f, 138f), level.AccentTint);
                 break;
             case 2:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(662, 74, 168, 168), level.LandmarkTint * 0.85f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(706, 118, 28, 28), new Color(150, 150, 160));
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(756, 168, 20, 20), new Color(140, 140, 150));
+                for (var y = 102; y < 582; y += 112)
+                {
+                    PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(30, y, GameConfig.ScreenWidth - 60, 2), new Color(112, 118, 170) * 0.18f);
+                }
+
+                DrawPixelDisc(new Vector2(480f, 244f), 44, level.LandmarkTint, 4);
+                DrawPixelDisc(new Vector2(446f, 220f), 10, new Color(192, 198, 206), 4);
+                DrawPixelDisc(new Vector2(508f, 266f), 8, new Color(188, 194, 204), 4);
+                DrawPixelDisc(new Vector2(474f, 286f), 7, new Color(184, 190, 198), 4);
                 break;
             case 3:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(118, 128, 74, 44), level.LandmarkTint * 0.75f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(690, 218, 56, 34), level.AccentTint * 0.75f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(514, 476, 88, 56), level.LandmarkTint * 0.65f);
+                DrawRingBand(new Vector2(472f, 282f), 254, 7, new Color(228, 216, 192) * 0.55f, 12);
+                DrawPixelDisc(new Vector2(482f, 284f), 50, level.LandmarkTint, 4);
+                DrawPixelDisc(new Vector2(492f, 220f), 8, new Color(206, 196, 172), 4);
+                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(308, 298, 116, 10), new Color(242, 232, 214) * 0.82f);
+                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(556, 298, 126, 10), new Color(242, 232, 214) * 0.82f);
+                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(562, 286, 164, 58), new Color(18, 10, 24) * 0.42f);
                 break;
             case 4:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(708, 436, 192, 192), level.LandmarkTint * 0.82f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(88, 96, 96, 96), level.AccentTint * 0.22f);
+                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(524, 152, 240, 208), level.AccentTint * 0.06f);
+                DrawPixelDisc(new Vector2(620f, 264f), 52, level.LandmarkTint, 4);
+                DrawPixelDisc(new Vector2(596f, 238f), 10, new Color(138, 222, 255), 4);
+                DrawPixelDisc(new Vector2(638f, 282f), 8, new Color(124, 206, 255), 4);
+                DrawPixelDisc(new Vector2(654f, 220f), 7, new Color(124, 206, 255), 4);
                 break;
             default:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(330, 86, 300, 300), level.AccentTint * 0.18f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(406, 162, 148, 148), level.LandmarkTint * 0.22f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(452, 208, 56, 56), new Color(255, 210, 180) * 0.28f);
+                DrawPixelDisc(new Vector2(480f, 274f), 52, level.LandmarkTint, 4);
+                DrawPixelDisc(new Vector2(450f, 246f), 10, new Color(198, 58, 38), 4);
+                DrawPixelDisc(new Vector2(508f, 296f), 9, new Color(202, 62, 38), 4);
+                DrawPixelDisc(new Vector2(520f, 232f), 7, new Color(255, 146, 86), 4);
+                DrawDustBand(356, new Color(255, 226, 212) * 0.28f);
                 break;
+        }
+    }
+
+    private void DrawPixelDisc(Vector2 center, int radius, Color color, int pixelScale)
+    {
+        for (var y = -radius; y <= radius; y++)
+        {
+            var span = (int)MathF.Sqrt((radius * radius) - (y * y));
+            var drawY = (int)center.Y + (y * pixelScale);
+            var drawX = (int)center.X - (span * pixelScale);
+            var drawWidth = ((span * 2) + 1) * pixelScale;
+
+            PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(drawX, drawY, drawWidth, pixelScale), color);
+        }
+    }
+
+    private void DrawRingBand(Vector2 center, int halfWidth, int strips, Color color, int taper)
+    {
+        for (var i = 0; i < strips; i++)
+        {
+            var distanceFromCenter = Math.Abs(i - (strips / 2));
+            var inset = distanceFromCenter * taper;
+            var y = (int)center.Y + ((i - (strips / 2)) * 6);
+            var width = (halfWidth * 2) - (inset * 2);
+
+            PrimitiveRenderer.DrawRect(
+                _game.SpriteBatch,
+                _game.Pixel,
+                new Rectangle((int)center.X - halfWidth + inset, y, width, 4),
+                color);
+        }
+    }
+
+    private void DrawSpaceStation(Vector2 origin, Color accentColor)
+    {
+        var x = (int)origin.X;
+        var y = (int)origin.Y;
+
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x, y, 180, 18), new Color(214, 228, 246));
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x + 68, y - 40, 16, 96), new Color(182, 204, 236));
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x + 146, y - 18, 28, 52), new Color(208, 220, 242));
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x - 70, y + 6, 70, 6), accentColor * 0.78f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x + 180, y + 6, 78, 6), accentColor * 0.78f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x - 24, y - 46, 6, 102), new Color(190, 206, 232));
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x - 50, y - 2, 28, 14), new Color(112, 150, 214));
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x + 196, y - 2, 28, 14), new Color(112, 150, 214));
+    }
+
+    private void DrawDustBand(int centerY, Color color)
+    {
+        for (var i = 0; i < 72; i++)
+        {
+            var x = 24 + ((i * 13) % (GameConfig.ScreenWidth - 48));
+            var y = centerY + (((i * 29) % 28) - 14);
+            var size = 2 + (i % 3);
+
+            PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x, y, size, size), color);
         }
     }
 

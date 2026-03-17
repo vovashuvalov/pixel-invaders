@@ -8,10 +8,10 @@ public static class CampaignData
 {
     public static IReadOnlyList<LevelDefinition> Levels { get; } =
     [
-        new LevelDefinition(1, "EARTH ORBIT", new Color(40, 86, 170), new Color(96, 210, 255), new Color(88, 170, 255)),
-        new LevelDefinition(2, "MOON", new Color(70, 76, 102), new Color(215, 225, 240), new Color(196, 196, 202)),
-        new LevelDefinition(3, "ASTEROIDS", new Color(72, 44, 32), new Color(214, 160, 100), new Color(140, 104, 76)),
-        new LevelDefinition(4, "MARS", new Color(110, 42, 34), new Color(255, 140, 88), new Color(185, 78, 60)),
-        new LevelDefinition(5, "FINAL FRONT", new Color(96, 18, 46), new Color(255, 86, 122), new Color(255, 118, 86))
+        new LevelDefinition(1, "EARTH STATION", new Color(34, 62, 120), new Color(128, 216, 255), new Color(86, 168, 238)),
+        new LevelDefinition(2, "MOON", new Color(50, 48, 80), new Color(218, 226, 238), new Color(208, 212, 220)),
+        new LevelDefinition(3, "RING WORLD", new Color(58, 34, 74), new Color(232, 220, 190), new Color(208, 180, 132)),
+        new LevelDefinition(4, "BLUE GIANT", new Color(12, 32, 86), new Color(136, 196, 255), new Color(112, 126, 246)),
+        new LevelDefinition(5, "RED FRONT", new Color(66, 18, 30), new Color(255, 118, 72), new Color(236, 74, 40))
     ];
 }
