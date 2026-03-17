@@ -57,7 +57,7 @@ dotnet run --project src/GalacticCoopShooter/GalacticCoopShooter.csproj
 
 ## Game Overview
 
-- 5 levels: `Earth Station`, `Moon`, `Ring World`, `Blue Giant`, `Red Front`
+- 5 levels: `Moon`, `Earth Station`, `Ring World`, `Blue Planet`, `Red Front`
 - 3 regular waves per level plus a boss encounter
 - 5 enemy types:
   - `Green` drifter

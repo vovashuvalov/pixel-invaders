@@ -118,9 +118,9 @@ public sealed class ShooterGame : Game
 
     private void DrawBackground()
     {
-        var stripeHeight = 12;
-        var topColor = new Color(10, 20, 60);
-        var bottomColor = new Color(2, 4, 18);
+        var stripeHeight = 10;
+        var topColor = new Color(12, 12, 34);
+        var bottomColor = new Color(6, 8, 26);
 
         for (var y = 0; y < GameConfig.ScreenHeight; y += stripeHeight)
         {
@@ -129,14 +129,10 @@ public sealed class ShooterGame : Game
             PrimitiveRenderer.DrawRect(SpriteBatch, Pixel, new Rectangle(0, y, GameConfig.ScreenWidth, stripeHeight), color);
         }
 
-        var pulse = 0.45f + (MathF.Sin(_backgroundTime * 0.5f) * 0.2f);
-        PrimitiveRenderer.DrawRect(SpriteBatch, Pixel, new Rectangle(70, 100, 240, 170), new Color(20, 70, 150) * pulse);
-        PrimitiveRenderer.DrawRect(SpriteBatch, Pixel, new Rectangle(620, 240, 280, 200), new Color(18, 55, 120) * (pulse * 0.9f));
-
         for (var i = 0; i < _stars.Count; i++)
         {
             var star = _stars[i];
-            var alpha = 0.4f + 0.4f * MathF.Abs(MathF.Sin(_backgroundTime + i));
+            var alpha = 0.35f + 0.45f * MathF.Abs(MathF.Sin((_backgroundTime * 0.5f) + i));
             var color = new Color(200, 220, 255) * alpha;
 
             PrimitiveRenderer.DrawRect(

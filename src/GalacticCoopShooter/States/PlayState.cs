@@ -302,51 +302,102 @@ public sealed class PlayState : IGameState
     {
         var level = _waveManager.CurrentLevel;
 
-        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, GameConfig.ScreenBounds, level.PrimaryTint * 0.12f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, GameConfig.ScreenBounds, level.PrimaryTint * 0.14f);
 
         switch (level.Number)
         {
             case 1:
-                DrawPixelDisc(new Vector2(194f, 704f), 58, level.LandmarkTint, 4);
-                DrawPixelDisc(new Vector2(148f, 670f), 14, new Color(96, 208, 138), 4);
-                DrawPixelDisc(new Vector2(228f, 730f), 11, new Color(92, 198, 126), 4);
-                DrawPixelDisc(new Vector2(278f, 688f), 10, new Color(84, 188, 114), 4);
-                DrawSpaceStation(new Vector2(560f, 138f), level.AccentTint);
+                DrawMoonScene(level);
                 break;
             case 2:
-                for (var y = 102; y < 582; y += 112)
-                {
-                    PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(30, y, GameConfig.ScreenWidth - 60, 2), new Color(112, 118, 170) * 0.18f);
-                }
-
-                DrawPixelDisc(new Vector2(480f, 244f), 44, level.LandmarkTint, 4);
-                DrawPixelDisc(new Vector2(446f, 220f), 10, new Color(192, 198, 206), 4);
-                DrawPixelDisc(new Vector2(508f, 266f), 8, new Color(188, 194, 204), 4);
-                DrawPixelDisc(new Vector2(474f, 286f), 7, new Color(184, 190, 198), 4);
+                DrawEarthStationScene(level);
                 break;
             case 3:
-                DrawRingBand(new Vector2(472f, 282f), 254, 7, new Color(228, 216, 192) * 0.55f, 12);
-                DrawPixelDisc(new Vector2(482f, 284f), 50, level.LandmarkTint, 4);
-                DrawPixelDisc(new Vector2(492f, 220f), 8, new Color(206, 196, 172), 4);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(308, 298, 116, 10), new Color(242, 232, 214) * 0.82f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(556, 298, 126, 10), new Color(242, 232, 214) * 0.82f);
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(562, 286, 164, 58), new Color(18, 10, 24) * 0.42f);
+                DrawRingWorldScene(level);
                 break;
             case 4:
-                PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(524, 152, 240, 208), level.AccentTint * 0.06f);
-                DrawPixelDisc(new Vector2(620f, 264f), 52, level.LandmarkTint, 4);
-                DrawPixelDisc(new Vector2(596f, 238f), 10, new Color(138, 222, 255), 4);
-                DrawPixelDisc(new Vector2(638f, 282f), 8, new Color(124, 206, 255), 4);
-                DrawPixelDisc(new Vector2(654f, 220f), 7, new Color(124, 206, 255), 4);
+                DrawBluePlanetScene(level);
                 break;
             default:
-                DrawPixelDisc(new Vector2(480f, 274f), 52, level.LandmarkTint, 4);
-                DrawPixelDisc(new Vector2(450f, 246f), 10, new Color(198, 58, 38), 4);
-                DrawPixelDisc(new Vector2(508f, 296f), 9, new Color(202, 62, 38), 4);
-                DrawPixelDisc(new Vector2(520f, 232f), 7, new Color(255, 146, 86), 4);
-                DrawDustBand(356, new Color(255, 226, 212) * 0.28f);
+                DrawRedPlanetScene(level);
                 break;
         }
+    }
+
+    private void DrawMoonScene(LevelDefinition level)
+    {
+        for (var y = 132; y <= 560; y += 108)
+        {
+            PrimitiveRenderer.DrawRect(
+                _game.SpriteBatch,
+                _game.Pixel,
+                new Rectangle(18, y, GameConfig.ScreenWidth - 36, 3),
+                new Color(82, 84, 130) * 0.16f);
+        }
+
+        DrawPixelDisc(new Vector2(480f, 208f), 38, new Color(236, 238, 236), 2);
+        DrawPixelDisc(new Vector2(468f, 192f), 10, new Color(212, 218, 224), 2);
+        DrawPixelDisc(new Vector2(498f, 212f), 12, new Color(210, 216, 222), 2);
+        DrawPixelDisc(new Vector2(452f, 226f), 8, new Color(198, 204, 212), 2);
+        DrawPixelDisc(new Vector2(490f, 238f), 7, new Color(202, 208, 216), 2);
+        DrawPixelDisc(new Vector2(484f, 208f), 40, new Color(255, 255, 255) * 0.08f, 2);
+    }
+
+    private void DrawEarthStationScene(LevelDefinition level)
+    {
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(88, 112, 172, 52), new Color(12, 18, 36) * 0.26f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(612, 78, 204, 44), new Color(10, 14, 32) * 0.22f);
+
+        DrawPixelDisc(new Vector2(250f, 696f), 92, level.LandmarkTint, 2);
+        DrawPixelDisc(new Vector2(220f, 662f), 18, new Color(104, 206, 152), 2);
+        DrawPixelDisc(new Vector2(274f, 644f), 16, new Color(78, 176, 118), 2);
+        DrawPixelDisc(new Vector2(326f, 682f), 12, new Color(88, 188, 126), 2);
+        DrawPixelDisc(new Vector2(206f, 718f), 12, new Color(220, 244, 250) * 0.45f, 2);
+
+        DrawRotatedBar(new Vector2(312f, 184f), new Vector2(404f, 18f), -0.14f, new Color(216, 226, 246));
+        DrawRotatedBar(new Vector2(390f, 134f), new Vector2(24f, 214f), 0.08f, new Color(186, 202, 230));
+        DrawRotatedBar(new Vector2(644f, 154f), new Vector2(54f, 104f), -0.12f, new Color(206, 218, 238));
+        DrawRotatedBar(new Vector2(298f, 210f), new Vector2(156f, 6f), -0.14f, new Color(112, 136, 174));
+        DrawRotatedBar(new Vector2(498f, 194f), new Vector2(120f, 6f), -0.14f, new Color(112, 136, 174));
+        DrawRotatedBar(new Vector2(360f, 188f), new Vector2(8f, 232f), -1.42f, new Color(194, 206, 230) * 0.75f);
+        DrawRotatedBar(new Vector2(748f, 214f), new Vector2(84f, 4f), -1.44f, new Color(255, 255, 255) * 0.72f);
+
+        DrawPixelDisc(new Vector2(614f, 126f), 4, new Color(235, 238, 246), 2);
+        DrawFlare(new Vector2(690f, 284f), 18, new Color(255, 255, 255) * 0.82f);
+    }
+
+    private void DrawRingWorldScene(LevelDefinition level)
+    {
+        DrawRingBand(new Vector2(484f, 278f), 310, 9, new Color(232, 224, 208) * 0.56f, 10);
+        DrawPixelDisc(new Vector2(484f, 270f), 52, new Color(218, 200, 168), 2);
+        DrawPixelDisc(new Vector2(484f, 226f), 18, new Color(210, 196, 170), 2);
+        DrawPixelDisc(new Vector2(492f, 202f), 8, new Color(88, 196, 226), 2);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(328, 286, 136, 12), new Color(244, 236, 220) * 0.86f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(536, 286, 190, 12), new Color(244, 236, 220) * 0.86f);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(590, 240, 190, 98), new Color(16, 8, 22) * 0.46f);
+        DrawFlare(new Vector2(492f, 274f), 9, new Color(255, 242, 184) * 0.65f);
+    }
+
+    private void DrawBluePlanetScene(LevelDefinition level)
+    {
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(0, 356, GameConfig.ScreenWidth, 250), new Color(22, 64, 122) * 0.08f);
+        DrawPixelDisc(new Vector2(484f, 246f), 54, level.LandmarkTint, 2);
+        DrawRotatedBar(new Vector2(430f, 226f), new Vector2(104f, 12f), 0.16f, new Color(142, 154, 255) * 0.30f);
+        DrawRotatedBar(new Vector2(444f, 270f), new Vector2(92f, 12f), -0.20f, new Color(150, 170, 255) * 0.26f);
+        DrawPixelDisc(new Vector2(452f, 246f), 7, new Color(116, 234, 255), 2);
+        DrawPixelDisc(new Vector2(506f, 266f), 8, new Color(106, 214, 255), 2);
+        DrawPixelDisc(new Vector2(478f, 226f), 6, new Color(116, 228, 255), 2);
+    }
+
+    private void DrawRedPlanetScene(LevelDefinition level)
+    {
+        DrawDustBand(358, new Color(244, 232, 228) * 0.30f);
+        DrawPixelDisc(new Vector2(482f, 252f), 52, level.LandmarkTint, 2);
+        DrawPixelDisc(new Vector2(454f, 226f), 10, new Color(184, 40, 24), 2);
+        DrawPixelDisc(new Vector2(500f, 204f), 8, new Color(255, 132, 76), 2);
+        DrawPixelDisc(new Vector2(528f, 248f), 9, new Color(222, 58, 36), 2);
+        DrawPixelDisc(new Vector2(470f, 284f), 8, new Color(204, 52, 32), 2);
+        DrawPixelDisc(new Vector2(516f, 290f), 7, new Color(188, 44, 28), 2);
     }
 
     private void DrawPixelDisc(Vector2 center, int radius, Color color, int pixelScale)
@@ -392,6 +443,27 @@ public sealed class PlayState : IGameState
         PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x - 24, y - 46, 6, 102), new Color(190, 206, 232));
         PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x - 50, y - 2, 28, 14), new Color(112, 150, 214));
         PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle(x + 196, y - 2, 28, 14), new Color(112, 150, 214));
+    }
+
+    private void DrawRotatedBar(Vector2 position, Vector2 size, float rotation, Color color)
+    {
+        _game.SpriteBatch.Draw(
+            _game.Pixel,
+            new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y),
+            null,
+            color,
+            rotation,
+            new Vector2(0f, size.Y * 0.5f),
+            Microsoft.Xna.Framework.Graphics.SpriteEffects.None,
+            0f);
+    }
+
+    private void DrawFlare(Vector2 center, int radius, Color color)
+    {
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle((int)center.X - radius, (int)center.Y - 1, radius * 2, 2), color);
+        PrimitiveRenderer.DrawRect(_game.SpriteBatch, _game.Pixel, new Rectangle((int)center.X - 1, (int)center.Y - radius, 2, radius * 2), color);
+        DrawRotatedBar(new Vector2(center.X - radius, center.Y), new Vector2(radius * 2, 2), 0.78f, color * 0.82f);
+        DrawRotatedBar(new Vector2(center.X - radius, center.Y), new Vector2(radius * 2, 2), -0.78f, color * 0.82f);
     }
 
     private void DrawDustBand(int centerY, Color color)
